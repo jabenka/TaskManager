@@ -1,0 +1,60 @@
+pipeline {
+    agent any
+
+    stages {
+        stage('Checkout') {
+            steps {
+                git branch: 'develop',
+                url: 'https://github.com/jabenka/TaskManager.git',
+                credentialsId: 'githubPipeLine'
+            }
+        }
+
+        stage('Build') {
+            steps {
+                dir('DiscoveryService') {
+                    sh 'mvn clean package'
+                    sh 'ls -la target/*.jar || echo "No jar file found"'
+                }
+            }
+            post {
+                success {
+                    echo 'Build succeeded! Archive created: discovery-service/target/*.jar'
+                }
+                failure {
+                    echo 'Build failed!'
+                    error('Build stage failed')
+                }
+            }
+        }
+
+        stage('Run and Test') {
+            steps {
+                script {
+                    try {
+                        dir('DiscoveryService') {
+                            sh 'nohup java -jar target/*.jar &'
+                            sleep(time: 30, unit: 'SECONDS')
+                        }
+                    } finally {
+                        sh 'pkill -f "java -jar discovery-service/target/*.jar" || true'
+                    }
+                }
+            }
+        }
+    }
+
+    post {
+        always {
+            echo 'Pipeline completed'
+            sh 'pkill -f "java -jar discovery-service/target/*.jar" || true'
+
+        }
+        success {
+            echo 'Pipeline succeeded!'
+        }
+        failure {
+            echo 'Pipeline failed!'
+        }
+    }
+}
