@@ -1,9 +1,7 @@
 package com.zxcjabka.taskservice.persistence.entity;
 
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.Id;
-import jakarta.persistence.Table;
+import jakarta.persistence.*;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
 
@@ -14,9 +12,12 @@ import java.time.LocalDateTime;
 @FieldDefaults(level = AccessLevel.PRIVATE)
 @Setter
 @Getter
+@ToString
 @Table(name = "task")
 public class TaskEntity {
+
     @Id
+    @GeneratedValue(strategy = GenerationType.SEQUENCE)
     Long id;
 
     Long userId;
