@@ -10,8 +10,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
-import java.util.Optional;
-import java.util.stream.Collectors;
 
 @Service
 public class TaskServiceImpl implements TaskService {
@@ -26,8 +24,8 @@ public class TaskServiceImpl implements TaskService {
 
     @Override
     public List<TaskDTO> getTasks(String userId) {
-        Optional<TaskEntity> optionalTask = taskRepository.findById(Long.valueOf(userId));
-        return optionalTask.map(taskMapper::toDto).stream().collect(Collectors.toList());
+        List<TaskEntity> optionalTask = taskRepository.findAllByUserId(Long.valueOf(userId));
+        return optionalTask.stream().map(taskMapper::toDto).toList();
     }
 
     @Override
