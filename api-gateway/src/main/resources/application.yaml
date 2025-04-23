@@ -1,0 +1,30 @@
+spring:
+  application:
+    name: ApiGateway
+  cloud:
+    gateway:
+      discovery:
+            locator:
+              enabled: true
+      routes:
+        - id: task-create
+          uri: lb://TaskService
+          predicates:
+            - Path=/tasks/create
+            - Method=POST
+          filters:
+            - AddRequestHeader=X-User-Id, 1
+        - id: task-get
+          uri: lb://TaskService
+          predicates:
+            - Path=/tasks/get
+            - Method=GET
+          filters:
+            - AddRequestHeader=X-User-Id, 1
+server:
+  port: 5290
+eureka:
+  client:
+    serviceUrl:
+      defaultZone: http://${EUREKA}:${EUREKAPORT}/eureka/
+
