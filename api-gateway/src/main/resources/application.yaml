@@ -7,24 +7,29 @@ spring:
             locator:
               enabled: true
       routes:
+        - id: auth-service
+          uri: lb://AuthServer
+          predicates:
+            - Path=/auth/**
         - id: task-create
           uri: lb://TaskService
           predicates:
             - Path=/tasks/create
             - Method=POST
           filters:
-            - AddRequestHeader=X-User-Id, 1
+            - name: JWTFilter
         - id: task-get
           uri: lb://TaskService
           predicates:
             - Path=/tasks/get
             - Method=GET
           filters:
-            - AddRequestHeader=X-User-Id, 1
+            - name: JWTFilter
 server:
   port: 5290
 eureka:
   client:
     serviceUrl:
       defaultZone: http://${EUREKA}:${EUREKAPORT}/eureka/
-
+jwt:
+  secret: ${JWT_SECRET}

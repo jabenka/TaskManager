@@ -1,0 +1,25 @@
+spring:
+  application:
+    name: AuthServer
+  datasource:
+    driver-class-name: org.postgresql.Driver
+    username: ${DBUSERNAME}
+    password: ${DBPASSWORD}
+    url: jdbc:postgresql://localhost:5432/taskmanager
+  jpa:
+    properties:
+      hibernate:
+        default_schema: tasks
+    hibernate:
+      ddl-auto: update
+server:
+    port: 8430
+eureka:
+  client:
+    serviceUrl:
+      defaultZone: http://${EUREKA}:${EUREKAPORT}/eureka/
+jwt:
+  expiration: ${JWT_EXPIRATION}
+  secret: ${JWT_SECRET}
+
+
