@@ -11,6 +11,7 @@ spring:
           uri: lb://AuthServer
           predicates:
             - Path=/auth/**
+#
         - id: task-create
           uri: lb://TaskService
           predicates:
@@ -18,6 +19,7 @@ spring:
             - Method=POST
           filters:
             - name: JWTFilter
+#
         - id: task-get
           uri: lb://TaskService
           predicates:
@@ -25,6 +27,23 @@ spring:
             - Method=GET
           filters:
             - name: JWTFilter
+#
+        - id: task-delete
+          uri: lb://TaskService
+          predicates:
+            - Path=/tasks/delete
+            - Method=DELETE
+          filters:
+            - name: JWTFilter
+#
+        - id: task-edit
+          uri: lb://TaskService
+          predicates:
+            - Path=/tasks/edit
+            - Method=PATCH
+          filters:
+            - name: JWTFilter
+#
 server:
   port: 5290
 eureka:

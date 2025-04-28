@@ -10,6 +10,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public class TaskServiceImpl implements TaskService {
@@ -23,6 +24,7 @@ public class TaskServiceImpl implements TaskService {
     }
 
     @Override
+    @Transactional
     public List<TaskDTO> getTasks(String userId) {
         List<TaskEntity> optionalTask = taskRepository.findAllByUserId(Long.valueOf(userId));
         return optionalTask.stream().map(taskMapper::toDto).toList();
@@ -31,8 +33,32 @@ public class TaskServiceImpl implements TaskService {
     @Override
     @Transactional
     public TaskDTO createTask(TaskCreationForm taskForm, String userId) {
-        TaskEntity newTask=taskMapper.toEntity(taskForm, userId);
+        TaskEntity newTask = taskMapper.toEntity(taskForm, userId);
         newTask = taskRepository.saveAndFlush(newTask);
         return taskMapper.toDto(newTask);
     }
+
+    @Override
+    @Transactional
+    public String deleteTask(String userId, String taskTitle) {
+        Optional<TaskEntity> taskEntity = taskRepository.findTaskEntityByTitle(taskTitle);
+        TaskEntity task = taskEntity.stream().filter(t -> t.getUserId().equals(Long.parseLong(userId))).findFirst().orElse(null);
+        if (task != null) {
+            taskRepository.delete(task);
+        } else {
+            throw new IllegalArgumentException("Task title and userId does not match");
+        }
+        return String.format("Task with title %s has been deleted", taskTitle);
+    }
+
+    @Override
+    @Transactional
+    public TaskDTO editTask(String task, String userId, TaskCreationForm form) {
+        TaskEntity existingTask = taskRepository.findById(Long.valueOf(task)).orElseThrow(IllegalArgumentException::new);
+        existingTask = taskMapper.copyTaskEntity(existingTask, taskMapper.toEntity(form, userId));
+        existingTask = taskRepository.save(existingTask);
+        return taskMapper.toDto(existingTask);
+    }
+
+
 }

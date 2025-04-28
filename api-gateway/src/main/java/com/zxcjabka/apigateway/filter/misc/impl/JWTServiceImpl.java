@@ -25,8 +25,6 @@ public class JWTServiceImpl implements JWTService {
                     .parseClaimsJws(jwt);
             return true;
         } catch (JwtException e) {
-            e.printStackTrace();
-
             return false;
         }
     }
