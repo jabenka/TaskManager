@@ -2,6 +2,7 @@ package com.zxcjabka.taskservice.service.dto;
 
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.zxcjabka.taskservice.persistence.entity.TaskStatus;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
 
@@ -28,4 +29,6 @@ public class TaskDTO {
     Instant creationTime;
     @JsonProperty("priority")
     Integer priority;
+    @JsonProperty("status")
+    TaskStatus status;
 }

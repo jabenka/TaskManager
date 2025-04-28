@@ -16,20 +16,28 @@ public class TaskController {
     }
 
     @GetMapping("/get")
-    public ResponseEntity<?> getTasks(@RequestHeader("X-User-Id") String userId ){
+    public ResponseEntity<?> getTasks(@RequestHeader("X-User-Id") String userId) {
         return ResponseEntity.ok(taskService.getTasks(userId));
     }
 
     @PostMapping("/create")
     public ResponseEntity<?> addTask(
             @RequestHeader("X-User-Id") String userId,
-            @RequestBody TaskCreationForm task){
-        return ResponseEntity.ok(taskService.createTask(task,userId));
+            @RequestBody TaskCreationForm task) {
+        return ResponseEntity.ok(taskService.createTask(task, userId));
     }
+
     @DeleteMapping("/delete")
     public ResponseEntity<?> deleteTask(@RequestHeader("X-User-Id") String userId,
-                                        @RequestParam(name = "name") String taskTitle){
-            return ResponseEntity.ok(taskService.deleteTask(userId,taskTitle));
+                                        @RequestParam(name = "name") String taskTitle) {
+        return ResponseEntity.ok(taskService.deleteTask(userId, taskTitle));
+    }
+
+    @PatchMapping("/edit")
+    public ResponseEntity<?> editTask(@RequestHeader("X-User-Id") String userId,
+                                      @RequestParam("Id") String taskId,
+                                      @RequestBody TaskCreationForm form) {
+        return ResponseEntity.ok(taskService.editTask(taskId, userId, form));
     }
 
 }

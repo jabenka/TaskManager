@@ -10,4 +10,6 @@ public interface TaskService {
     TaskDTO createTask(TaskCreationForm taskForm,String userId);
 
     String deleteTask(String userId, String taskTitle);
+
+    TaskDTO editTask(String task, String userId,TaskCreationForm taskCreationForm);
 }

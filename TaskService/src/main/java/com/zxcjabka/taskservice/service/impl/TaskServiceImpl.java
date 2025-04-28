@@ -24,6 +24,7 @@ public class TaskServiceImpl implements TaskService {
     }
 
     @Override
+    @Transactional
     public List<TaskDTO> getTasks(String userId) {
         List<TaskEntity> optionalTask = taskRepository.findAllByUserId(Long.valueOf(userId));
         return optionalTask.stream().map(taskMapper::toDto).toList();
@@ -38,6 +39,7 @@ public class TaskServiceImpl implements TaskService {
     }
 
     @Override
+    @Transactional
     public String deleteTask(String userId, String taskTitle) {
         Optional<TaskEntity> taskEntity = taskRepository.findTaskEntityByTitle(taskTitle);
         TaskEntity task = taskEntity.stream().filter(t -> t.getUserId().equals(Long.parseLong(userId))).findFirst().orElse(null);
@@ -48,4 +50,15 @@ public class TaskServiceImpl implements TaskService {
         }
         return String.format("Task with title %s has been deleted", taskTitle);
     }
+
+    @Override
+    @Transactional
+    public TaskDTO editTask(String task, String userId, TaskCreationForm form) {
+        TaskEntity existingTask = taskRepository.findById(Long.valueOf(task)).orElseThrow(IllegalArgumentException::new);
+        existingTask = taskMapper.copyTaskEntity(existingTask, taskMapper.toEntity(form, userId));
+        existingTask = taskRepository.save(existingTask);
+        return taskMapper.toDto(existingTask);
+    }
+
+
 }
