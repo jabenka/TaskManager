@@ -21,7 +21,7 @@ public class TaskEntity {
     Long id;
 
     Long userId;
-
+    @Column(nullable = false,unique = true)
     String title;
 
     String description;

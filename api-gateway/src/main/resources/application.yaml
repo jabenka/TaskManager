@@ -25,6 +25,13 @@ spring:
             - Method=GET
           filters:
             - name: JWTFilter
+        - id: task-delete
+          uri: lb://TaskService
+          predicates:
+            - Path=/tasks/delete
+            - Method=DELETE
+          filters:
+            - name: JWTFilter
 server:
   port: 5290
 eureka:

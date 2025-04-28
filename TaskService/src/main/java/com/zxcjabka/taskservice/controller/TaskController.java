@@ -26,5 +26,10 @@ public class TaskController {
             @RequestBody TaskCreationForm task){
         return ResponseEntity.ok(taskService.createTask(task,userId));
     }
-    //todo add more interactions with tasks
+    @DeleteMapping("/delete")
+    public ResponseEntity<?> deleteTask(@RequestHeader("X-User-Id") String userId,
+                                        @RequestParam(name = "name") String taskTitle){
+            return ResponseEntity.ok(taskService.deleteTask(userId,taskTitle));
+    }
+
 }
