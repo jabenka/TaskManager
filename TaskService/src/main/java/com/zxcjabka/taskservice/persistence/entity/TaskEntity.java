@@ -1,6 +1,7 @@
 package com.zxcjabka.taskservice.persistence.entity;
 
 
+import com.zxcjabka.taskservice.exception.validation.annotation.ValidTaskStatus;
 import jakarta.persistence.*;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
@@ -32,6 +33,7 @@ public class TaskEntity {
     LocalDateTime deadline;
 
     Instant creationTime;
+
 
     Integer priority;
 

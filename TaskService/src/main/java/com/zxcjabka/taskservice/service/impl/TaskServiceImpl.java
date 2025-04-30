@@ -1,5 +1,6 @@
 package com.zxcjabka.taskservice.service.impl;
 
+import com.zxcjabka.taskservice.exception.exeptions.TaskNotFoundException;
 import com.zxcjabka.taskservice.persistence.entity.TaskEntity;
 import com.zxcjabka.taskservice.persistence.repository.TaskRepository;
 import com.zxcjabka.taskservice.service.TaskService;
@@ -46,7 +47,7 @@ public class TaskServiceImpl implements TaskService {
         if (task != null) {
             taskRepository.delete(task);
         } else {
-            throw new IllegalArgumentException("Task title and userId does not match");
+            throw new TaskNotFoundException("Task not found");
         }
         return String.format("Task with title %s has been deleted", taskTitle);
     }
@@ -54,7 +55,9 @@ public class TaskServiceImpl implements TaskService {
     @Override
     @Transactional
     public TaskDTO editTask(String task, String userId, TaskCreationForm form) {
-        TaskEntity existingTask = taskRepository.findById(Long.valueOf(task)).orElseThrow(IllegalArgumentException::new);
+        TaskEntity existingTask = taskRepository.findById(Long.valueOf(task))
+                .filter(t -> t.getUserId().equals(Long.parseLong(userId)))
+                .orElseThrow(()->new TaskNotFoundException("Task not found"));
         existingTask = taskMapper.copyTaskEntity(existingTask, taskMapper.toEntity(form, userId));
         existingTask = taskRepository.save(existingTask);
         return taskMapper.toDto(existingTask);
