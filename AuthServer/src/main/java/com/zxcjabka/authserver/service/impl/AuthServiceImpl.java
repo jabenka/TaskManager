@@ -1,7 +1,7 @@
 package com.zxcjabka.authserver.service.impl;
 
 import com.zxcjabka.authserver.presistence.entity.UserEntity;
-import com.zxcjabka.authserver.presistence.repository.userRepository;
+import com.zxcjabka.authserver.presistence.repository.UserRepository;
 import com.zxcjabka.authserver.service.AuthService;
 import com.zxcjabka.authserver.service.JWTService;
 import com.zxcjabka.authserver.service.dto.AuthRequest;
@@ -17,14 +17,15 @@ import org.springframework.transaction.annotation.Transactional;
 public class AuthServiceImpl implements AuthService {
 
     private final JWTService jwtService;
-    private final userRepository userRepository;
+    private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
 
-    public AuthServiceImpl(JWTService jwtService, com.zxcjabka.authserver.presistence.repository.userRepository userRepository, PasswordEncoder passwordEncoder) {
+    public AuthServiceImpl(JWTService jwtService, UserRepository userRepository, PasswordEncoder passwordEncoder) {
         this.jwtService = jwtService;
         this.userRepository = userRepository;
         this.passwordEncoder = passwordEncoder;
     }
+
 
     @Override
     public AuthResponse authenticate(AuthRequest authRequest) {
@@ -42,6 +43,7 @@ public class AuthServiceImpl implements AuthService {
         UserEntity newUser = new UserEntity();
         newUser.setUsername(registrationRequest.getUsername());
         newUser.setPassword(passwordEncoder.encode(registrationRequest.getPassword()));
+        newUser.setEmail(registrationRequest.getEmail());
         newUser = userRepository.saveAndFlush(newUser);
         String token = jwtService.createJWT(newUser);
         return new AuthResponse(token);

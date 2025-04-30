@@ -3,11 +3,10 @@ package com.zxcjabka.authserver.service.impl;
 import com.zxcjabka.authserver.presistence.entity.UserEntity;
 import com.zxcjabka.authserver.service.JWTService;
 import io.jsonwebtoken.Jwts;
-import io.jsonwebtoken.SignatureAlgorithm;
 import io.jsonwebtoken.security.Keys;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
-import com.zxcjabka.authserver.presistence.repository.userRepository;
+import com.zxcjabka.authserver.presistence.repository.UserRepository;
 
 import java.nio.charset.StandardCharsets;
 import java.util.Date;
@@ -18,9 +17,9 @@ public class JWTServiceImpl implements JWTService {
     @Value("${jwt.expiration}")
     private String expiration;
 
-    private final userRepository userRepository;
+    private final UserRepository userRepository;
 
-    public JWTServiceImpl(com.zxcjabka.authserver.presistence.repository.userRepository userRepository) {
+    public JWTServiceImpl(UserRepository userRepository) {
         this.userRepository = userRepository;
     }
 

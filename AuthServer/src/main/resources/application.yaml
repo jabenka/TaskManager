@@ -11,7 +11,7 @@ spring:
       hibernate:
         default_schema: tasks
     hibernate:
-      ddl-auto: update
+      ddl-auto: create
 server:
     port: 8430
 eureka:
