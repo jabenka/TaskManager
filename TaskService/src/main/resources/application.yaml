@@ -12,6 +12,11 @@ spring:
         default_schema: tasks
     hibernate:
       ddl-auto: update
+  rabbitmq:
+    host: localhost
+    port: 5672
+    username: guest
+    password: guest
 server:
   port: 9120
 eureka:

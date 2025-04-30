@@ -1,7 +1,6 @@
 package com.zxcjabka.taskservice.persistence.entity;
 
 
-import com.zxcjabka.taskservice.exception.validation.annotation.ValidTaskStatus;
 import jakarta.persistence.*;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
@@ -25,7 +24,7 @@ public class TaskEntity {
     Long id;
 
     Long userId;
-    @Column(nullable = false,unique = true)
+    @Column(nullable = false, unique = true)
     String title;
 
     String description;
@@ -34,20 +33,9 @@ public class TaskEntity {
 
     Instant creationTime;
 
-
     Integer priority;
 
     @Enumerated(EnumType.STRING)
     TaskStatus status;
 
-    public TaskEntity(TaskEntity newTask) {
-        this.id = newTask.id;
-        this.userId = newTask.userId;
-        this.title = newTask.title;
-        this.description = newTask.description;
-        this.deadline = newTask.deadline;
-        this.creationTime = newTask.creationTime;
-        this.priority = newTask.priority;
-        this.status = newTask.status;
-    }
 }
