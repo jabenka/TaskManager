@@ -25,9 +25,6 @@ public class SecurityConfig {
                 authorizeRequests ->
                         authorizeRequests.requestMatchers("/auth/**").permitAll().anyRequest().authenticated()
         );
-
-        System.err.println(passwordEncoder().encode("password"));
-
         http.csrf(AbstractHttpConfigurer::disable);
         http.cors(cors -> cors.configurationSource(request -> {
             CorsConfiguration config = new CorsConfiguration();
