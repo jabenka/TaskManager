@@ -3,21 +3,25 @@ spring:
     name: AuthServer
   datasource:
     driver-class-name: org.postgresql.Driver
-    username: ${DBUSERNAME}
-    password: ${DBPASSWORD}
-    url: jdbc:postgresql://localhost:5432/taskmanager
+    username: ${DBUSERNAME:postgres}  # значение по умолчанию
+    password: ${DBPASSWORD:password}  # значение по умолчанию
+    url: jdbc:postgresql://postgres:5432/taskmanager  # имя сервиса из docker-compose
   jpa:
     properties:
       hibernate:
-        default_schema: tasks
+        default_schema: public
     hibernate:
       ddl-auto: update
+    database-platform: org.hibernate.dialect.PostgreSQLDialect
+
 server:
     port: 8430
 eureka:
   client:
     serviceUrl:
       defaultZone: http://${EUREKA}:${EUREKAPORT}/eureka/
+  instance:
+    prefer-ip-address: true
 jwt:
   expiration: ${JWT_EXPIRATION}
   secret: ${JWT_SECRET}

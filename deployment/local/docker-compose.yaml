@@ -1,0 +1,144 @@
+version: '3.8'
+
+services:
+  #infra
+  postgres:
+    image: postgres:13
+    environment:
+      POSTGRES_USER: ${DB_USERNAME:-postgres}
+      POSTGRES_PASSWORD: ${DB_PASSWORD:-password}
+      POSTGRES_DB: ${DB_NAME:-taskmanager}
+    ports:
+      - "5438:5432"
+    volumes:
+      - ./init.sql:/docker-entrypoint-initdb.d/init.sql
+      - postgres_data:/var/lib/postgresql/data
+    networks:
+      - microservices-net
+  rabbitmq:
+    image: rabbitmq:3.11-management
+    container_name: rabbitmq
+    environment:
+      RABBITMQ_DEFAULT_USER: ${RABBITMQ_USER:-guest}
+      RABBITMQ_DEFAULT_PASS: ${RABBITMQ_PASSWORD:-guest}
+    ports:
+      - "5672:5672"
+      - "15672:15672"
+    volumes:
+      - rabbitmq_data:/var/lib/rabbitmq
+    networks:
+      - microservices-net
+    healthcheck:
+      test: [ "CMD", "rabbitmq-diagnostics", "status" ]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+#servicies
+  discovery-service:
+    build:
+      context: ../../DiscoveryService
+      dockerfile: Dockerfile
+    container_name: DiscoveryServer
+    ports:
+      - "8081:8081"
+    environment:
+      SPRING_PROFILES_ACTIVE: docker
+    networks:
+      - microservices-net
+    depends_on:
+      - postgres
+
+  auth-service:
+    build:
+      context: ../../AuthServer
+      dockerfile: Dockerfile
+    container_name: AuthServer
+    environment:
+      SPRING_PROFILES_ACTIVE: docker
+      SPRING_APPLICATION_NAME: AuthServer
+      SPRING_DATASOURCE_URL: jdbc:postgresql://postgres:5432/${DB_NAME:-taskmanager}
+      SPRING_DATASOURCE_USERNAME: ${DB_USERNAME:-postgres}
+      SPRING_DATASOURCE_PASSWORD: ${DB_PASSWORD:-password}
+      EUREKA_CLIENT_SERVICE_URL_DEFAULTZONE: http://discovery-service:8081/eureka
+    ports:
+      - "8430:8430"
+    networks:
+      - microservices-net
+    depends_on:
+      - discovery-service
+      - postgres
+
+  task-service:
+    build:
+      context: ../../TaskService
+      dockerfile: Dockerfile
+    container_name: TaskService
+    environment:
+      SPRING_PROFILES_ACTIVE: docker
+      SPRING_APPLICATION_NAME: TaskService
+      SPRING_DATASOURCE_URL: jdbc:postgresql://postgres:5432/${DB_NAME:-taskmanager}
+      SPRING_DATASOURCE_USERNAME: ${DB_USERNAME:-postgres}
+      SPRING_DATASOURCE_PASSWORD: ${DB_PASSWORD:-password}
+      SPRING_RABBITMQ_HOST: rabbitmq
+      SPRING_RABBITMQ_PORT: 5672
+      SPRING_RABBITMQ_USERNAME: ${RABBITMQ_USER:-guest}
+      SPRING_RABBITMQ_PASSWORD: ${RABBITMQ_PASSWORD:-guest}
+      SPRING_RABBITMQ_VIRTUAL_HOST: /
+    ports:
+      - "9120:9120"
+    networks:
+      - microservices-net
+    depends_on:
+      rabbitmq:
+        condition: service_healthy
+      discovery-service:
+        condition: service_started
+      postgres:
+        condition: service_healthy
+
+  gateway:
+    build:
+      context: ../../ApiGateway
+      dockerfile: Dockerfile
+    container_name: Gateway
+    environment:
+      SPRING_PROFILES_ACTIVE: docker
+      SPRING_APPLICATION_NAME: Gateway
+      EUREKA_CLIENT_SERVICE_URL_DEFAULTZONE: http://discovery-service:8081/eureka
+    ports:
+      - "5920:5290"
+    networks:
+      - microservices-net
+    depends_on:
+      - discovery-service
+
+  notification-service:
+    build:
+      context: ../../NotificationService
+      dockerfile: Dockerfile
+    container_name: NotificationService
+    environment:
+      SPRING_PROFILES_ACTIVE: docker
+      SPRING_APPLICATION_NAME: NotificationService
+      SPRING_RABBITMQ_HOST: rabbitmq
+      SPRING_RABBITMQ_PORT: 5672
+      SPRING_RABBITMQ_USERNAME: ${RABBITMQ_USER:-guest}
+      SPRING_RABBITMQ_PASSWORD: ${RABBITMQ_PASSWORD:-guest}
+      SPRING_RABBITMQ_VIRTUAL_HOST: /
+      SPRING_RABBITMQ_QUEUE: notifications.queue
+    networks:
+      - microservices-net
+    depends_on:
+      rabbitmq:
+        condition: service_healthy
+      discovery-service:
+        condition: service_started
+
+networks:
+  microservices-net:
+    driver: bridge
+
+volumes:
+  postgres_data:
+  rabbitmq_data:
