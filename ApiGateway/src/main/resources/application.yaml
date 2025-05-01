@@ -50,5 +50,7 @@ eureka:
   client:
     serviceUrl:
       defaultZone: http://${EUREKA}:${EUREKAPORT}/eureka/
+  instance:
+    prefer-ip-address: true
 jwt:
   secret: ${JWT_SECRET}

@@ -9,9 +9,9 @@ import java.sql.ResultSet;
 @Component
 public class UserEmailFetcher {
 
-    private static final String DB_URL = "jdbc:postgresql://localhost:5432/taskmanager";
+    private static final String DB_URL = "jdbc:postgresql://localhost:5438/taskmanager";
     private static final String DB_USER = "postgres";
-    private static final String DB_PASSWORD = "1488";
+    private static final String DB_PASSWORD = "password";
 
     public String fetchUserEmail(Long id) {
         String email=null;
