@@ -23,7 +23,7 @@ public class SecurityConfig {
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http.authorizeHttpRequests(
                 authorizeRequests ->
-                        authorizeRequests.requestMatchers("/auth/**").permitAll().anyRequest().authenticated()
+                        authorizeRequests.requestMatchers("/auth/**","/actuator/**").permitAll().anyRequest().authenticated()
         );
         http.csrf(AbstractHttpConfigurer::disable);
         http.cors(cors -> cors.configurationSource(request -> {

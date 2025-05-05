@@ -11,10 +11,16 @@ services:
     ports:
       - "5438:5432"
     volumes:
-      - ./init.sql:/docker-entrypoint-initdb.d/init.sql
       - postgres_data:/var/lib/postgresql/data
     networks:
       - microservices-net
+    healthcheck:
+      test: [ "CMD-SHELL", "pg_isready -U ${DB_USERNAME:-postgres} -d ${DB_NAME:-taskmanager}" ]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+      start_period: 10s
+
   rabbitmq:
     image: rabbitmq:3.11-management
     container_name: rabbitmq
@@ -34,7 +40,24 @@ services:
       timeout: 5s
       retries: 5
 
-#servicies
+  prometheus:
+    image: prom/prometheus:v2.44.0
+    container_name: prometheus
+    ports:
+      - "9090:9090"
+    volumes:
+      - ../monitoring/prometheus/prometheus.yml:/etc/prometheus/prometheus.yml
+
+  grafana:
+    image: grafana/grafana:9.5.2
+    container_name: grafana
+    ports:
+      - "3000:3000"
+    restart: unless-stopped
+    volumes:
+      - ../monitoring/grafana/provisioning/datasources:/etc/grafana/provisioning/datasources
+
+  #servicies
   discovery-service:
     build:
       context: ../../DiscoveryService
@@ -67,7 +90,6 @@ services:
       - microservices-net
     depends_on:
       - discovery-service
-      - postgres
 
   task-service:
     build:
@@ -90,12 +112,9 @@ services:
     networks:
       - microservices-net
     depends_on:
-      rabbitmq:
-        condition: service_healthy
-      discovery-service:
-        condition: service_started
-      postgres:
-        condition: service_healthy
+      - rabbitmq
+      - discovery-service
+      - postgres
 
   gateway:
     build:
@@ -107,7 +126,7 @@ services:
       SPRING_APPLICATION_NAME: Gateway
       EUREKA_CLIENT_SERVICE_URL_DEFAULTZONE: http://discovery-service:8081/eureka
     ports:
-      - "5920:5290"
+      - "5920:5920"
     networks:
       - microservices-net
     depends_on:
@@ -130,10 +149,8 @@ services:
     networks:
       - microservices-net
     depends_on:
-      rabbitmq:
-        condition: service_healthy
-      discovery-service:
-        condition: service_started
+      - rabbitmq
+      - discovery-service
 
 networks:
   microservices-net:

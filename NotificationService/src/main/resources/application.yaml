@@ -23,3 +23,11 @@ spring:
     port: 5672
     username: guest
     password: guest
+management:
+  endpoint:
+    prometheus:
+      access: unrestricted
+  endpoints:
+    web:
+      exposure:
+        include: health, prometheus
