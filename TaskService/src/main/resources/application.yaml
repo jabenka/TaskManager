@@ -25,3 +25,11 @@ eureka:
       defaultZone: http://${EUREKA}:${EUREKAPORT}/eureka/
   instance:
     prefer-ip-address: true
+management:
+  endpoint:
+    prometheus:
+      access: unrestricted
+  endpoints:
+    web:
+      exposure:
+        include: health, prometheus
