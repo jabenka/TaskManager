@@ -1,4 +1,4 @@
-# **Task Manager Microservice System**  
+# **Task Manager**  
 
 ## **Overview**  
 The **Task Manager** is a **microservice-based** system designed for **managing user tasks** with full **CRUD operations**, **deadline notifications**, and **JWT-based authentication**.  
