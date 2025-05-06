@@ -1,0 +1,24 @@
+spring:
+  application:
+    name: Eureka
+server:
+  port:
+    8081
+eureka:
+  instance:
+    hostname: discovery-service
+  client:
+    fetch-registry: false
+    register-with-eureka: false
+    serviceUrl:
+      defaultZone: http://${eureka.instance.hostname}:${server.port}/eureka/
+management:
+  endpoint:
+    prometheus:
+      access: unrestricted
+    health:
+      show-details: always
+  endpoints:
+    web:
+      exposure:
+        include: health, prometheus

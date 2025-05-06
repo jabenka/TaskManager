@@ -1,0 +1,36 @@
+spring:
+  application:
+    name: AuthServer
+  datasource:
+    driver-class-name: org.postgresql.Driver
+    username: ${DBUSERNAME:postgres}
+    password: ${DBPASSWORD:password}
+    url: jdbc:postgresql://postgres:5432/taskmanager
+  jpa:
+    properties:
+      hibernate:
+        default_schema: public
+    hibernate:
+      ddl-auto: update
+    database-platform: org.hibernate.dialect.PostgreSQLDialect
+management:
+  endpoint:
+    prometheus:
+      access: unrestricted
+  endpoints:
+    web:
+      exposure:
+        include: health, prometheus
+server:
+    port: 8430
+eureka:
+  client:
+    serviceUrl:
+      defaultZone: http://${EUREKA}:${EUREKAPORT}/eureka/
+  instance:
+    prefer-ip-address: true
+jwt:
+  expiration: ${JWT_EXPIRATION}
+  secret: ${JWT_SECRET}
+
+

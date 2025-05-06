@@ -1,0 +1,65 @@
+spring:
+  application:
+    name: ApiGateway
+  cloud:
+    gateway:
+      discovery:
+            locator:
+              enabled: true
+      routes:
+        - id: auth-service
+          uri: lb://AuthServer
+          predicates:
+            - Path=/auth/**
+#
+        - id: task-create
+          uri: lb://TaskService
+          predicates:
+            - Path=/tasks/create
+            - Method=POST
+          filters:
+            - name: JWTFilter
+#
+        - id: task-get
+          uri: lb://TaskService
+          predicates:
+            - Path=/tasks/get
+            - Method=GET
+          filters:
+            - name: JWTFilter
+#
+        - id: task-delete
+          uri: lb://TaskService
+          predicates:
+            - Path=/tasks/delete
+            - Method=DELETE
+          filters:
+            - name: JWTFilter
+#
+        - id: task-edit
+          uri: lb://TaskService
+          predicates:
+            - Path=/tasks/edit
+            - Method=PATCH
+          filters:
+            - name: JWTFilter
+#
+server:
+  address: 0.0.0.0
+  port: 5920
+eureka:
+  client:
+    serviceUrl:
+      defaultZone: http://${EUREKA}:${EUREKAPORT}/eureka/
+  instance:
+    prefer-ip-address: true
+jwt:
+  secret: ${JWT_SECRET}
+management:
+  endpoint:
+    prometheus:
+      access: unrestricted
+  endpoints:
+    web:
+      exposure:
+        include: health, prometheus

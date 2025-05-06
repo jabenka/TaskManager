@@ -1,0 +1,56 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  annotations:
+    kompose.cmd: kompose convert -f docker-compose.yaml
+    kompose.version: 1.26.1 (a9d05d509)
+  creationTimestamp: null
+  labels:
+    io.kompose.service: task-service
+  name: task-service
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      io.kompose.service: task-service
+  strategy: {}
+  template:
+    metadata:
+      annotations:
+        kompose.cmd: kompose convert -f docker-compose.yaml
+        kompose.version: 1.26.1 (a9d05d509)
+      creationTimestamp: null
+      labels:
+        io.kompose.network/microservices-net: "true"
+        io.kompose.service: task-service
+    spec:
+      containers:
+        - env:
+            - name: SPRING_APPLICATION_NAME
+              value: TaskService
+            - name: SPRING_DATASOURCE_PASSWORD
+              value: password
+            - name: SPRING_DATASOURCE_URL
+              value: jdbc:postgresql://postgres:5438/taskmanager
+            - name: SPRING_DATASOURCE_USERNAME
+              value: postgres
+            - name: SPRING_PROFILES_ACTIVE
+              value: docker
+            - name: SPRING_RABBITMQ_HOST
+              value: rabbitmq
+            - name: SPRING_RABBITMQ_PASSWORD
+              value: guest
+            - name: SPRING_RABBITMQ_PORT
+              value: "5672"
+            - name: SPRING_RABBITMQ_USERNAME
+              value: guest
+            - name: SPRING_RABBITMQ_VIRTUAL_HOST
+              value: /
+          image: task-service:latest
+          name: taskservice
+          imagePullPolicy: IfNotPresent
+          ports:
+            - containerPort: 9120
+          resources: {}
+      restartPolicy: Always
+status: {}
