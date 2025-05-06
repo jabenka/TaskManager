@@ -1,0 +1,19 @@
+apiVersion: v1
+kind: Service
+metadata:
+  annotations:
+    kompose.cmd: kompose convert -f docker-compose.yaml
+    kompose.version: 1.26.1 (a9d05d509)
+  creationTimestamp: null
+  labels:
+    io.kompose.service: task-service
+  name: task-service
+spec:
+  ports:
+    - name: "9120"
+      port: 9120
+      targetPort: 9120
+  selector:
+    io.kompose.service: task-service
+status:
+  loadBalancer: {}

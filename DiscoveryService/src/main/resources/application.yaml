@@ -6,7 +6,7 @@ server:
     8081
 eureka:
   instance:
-    hostname: DiscoveryServer
+    hostname: discovery-service
   client:
     fetch-registry: false
     register-with-eureka: false

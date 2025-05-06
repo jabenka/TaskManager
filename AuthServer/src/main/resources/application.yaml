@@ -3,9 +3,9 @@ spring:
     name: AuthServer
   datasource:
     driver-class-name: org.postgresql.Driver
-    username: ${DBUSERNAME:postgres}  # значение по умолчанию
-    password: ${DBPASSWORD:password}  # значение по умолчанию
-    url: jdbc:postgresql://postgres:5432/taskmanager  # имя сервиса из docker-compose
+    username: ${DBUSERNAME:postgres}
+    password: ${DBPASSWORD:password}
+    url: jdbc:postgresql://postgres:5432/taskmanager
   jpa:
     properties:
       hibernate:

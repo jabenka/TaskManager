@@ -59,9 +59,7 @@ services:
 
   #servicies
   discovery-service:
-    build:
-      context: ../../DiscoveryService
-      dockerfile: Dockerfile
+    image: discovery-service:latest
     container_name: DiscoveryServer
     ports:
       - "8081:8081"
@@ -73,9 +71,7 @@ services:
       - postgres
 
   auth-service:
-    build:
-      context: ../../AuthServer
-      dockerfile: Dockerfile
+    image: auth-service:latest
     container_name: AuthServer
     environment:
       SPRING_PROFILES_ACTIVE: docker
@@ -92,9 +88,7 @@ services:
       - discovery-service
 
   task-service:
-    build:
-      context: ../../TaskService
-      dockerfile: Dockerfile
+    image: task-service:latest
     container_name: TaskService
     environment:
       SPRING_PROFILES_ACTIVE: docker
@@ -117,9 +111,7 @@ services:
       - postgres
 
   gateway:
-    build:
-      context: ../../ApiGateway
-      dockerfile: Dockerfile
+    image: gateway:latest
     container_name: Gateway
     environment:
       SPRING_PROFILES_ACTIVE: docker
@@ -133,9 +125,7 @@ services:
       - discovery-service
 
   notification-service:
-    build:
-      context: ../../NotificationService
-      dockerfile: Dockerfile
+    image: notification-service:latest
     container_name: NotificationService
     environment:
       SPRING_PROFILES_ACTIVE: docker
